@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Download, Printer, ArrowLeft, MessageCircle } from 'lucide-react';
+import { Download, Printer, ArrowLeft, MessageCircle, Copy } from 'lucide-react';
 import Button from '../../components/ui/Button';
 import { salesAPI } from '../../services/api';
 import api from '../../services/api';
@@ -115,9 +115,18 @@ export default function InvoiceView() {
               <div className="bg-surface-50 rounded-xl p-4 mb-4 text-sm text-surface-700 whitespace-pre-wrap border border-surface-200 max-h-64 overflow-y-auto">
                 {wa.message}
               </div>
-              <div className="flex gap-3 justify-end">
+              <div className="flex gap-3 justify-end flex-wrap mt-4">
                 <button onClick={() => setShowWhatsApp(false)} className="px-4 py-2 text-sm font-medium text-surface-600 hover:text-surface-800 transition-colors">
                   Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(wa.message);
+                    toast.success('Message copied to clipboard');
+                  }}
+                  className="flex items-center gap-2 px-4 py-2 bg-surface-100 hover:bg-surface-200 text-surface-700 rounded-xl font-medium transition-colors"
+                >
+                  <Copy className="w-4 h-4" /> Copy Message
                 </button>
                 <a
                   href={wa.url}

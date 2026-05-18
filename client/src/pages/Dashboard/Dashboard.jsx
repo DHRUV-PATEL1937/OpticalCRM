@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DollarSign, ShoppingCart, AlertTriangle, Users, TrendingUp, TrendingDown, Package, ArrowRight } from 'lucide-react';
+import { DollarSign, ShoppingCart, AlertTriangle, Users, TrendingUp, TrendingDown, Package, ArrowRight, Copy } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Card, { CardHeader, CardTitle } from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
@@ -246,16 +246,30 @@ export default function Dashboard() {
                         <p className="text-xs text-primary-700 font-medium">{c.name}</p>
                         <p className="text-[10px] text-primary-400">{formatDate(c.dateOfBirth)}</p>
                       </div>
-                      {c.phone && (
-                        <a
-                          href={waUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-2.5 py-1 bg-[#25D366] hover:bg-[#1da851] text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm"
-                        >
-                          🎉 Send Wish
-                        </a>
-                      )}
+                      <div className="flex gap-2">
+                        {c.phone && (
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(bdayMsg);
+                              toast.success('Birthday message copied!');
+                            }}
+                            className="flex items-center gap-1 px-2.5 py-1 bg-surface-100 hover:bg-surface-200 text-surface-600 text-[10px] font-bold rounded-lg transition-colors shadow-sm"
+                            title="Copy Message"
+                          >
+                            <Copy className="w-3 h-3" />
+                          </button>
+                        )}
+                        {c.phone && (
+                          <a
+                            href={waUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 px-2.5 py-1 bg-[#25D366] hover:bg-[#1da851] text-white text-[10px] font-bold rounded-lg transition-colors shadow-sm"
+                          >
+                            🎉 Send
+                          </a>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
