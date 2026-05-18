@@ -184,111 +184,171 @@ export default function CreateBill() {
         {/* Left: Product search + items */}
         <div className="xl:col-span-2 space-y-6">
           {/* Customer Selection */}
-          <Card>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center">
-                <User className="w-5 h-5 text-primary-600" />
-              </div>
-              {customer ? (
-                <div className="flex-1 flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-surface-900">{customer.name}</p>
-                    <p className="text-xs text-surface-500">{customer.phone} {customer.category !== 'regular' && <Badge color={customer.category === 'vip' ? 'vip' : 'premium'} className="ml-1">{customer.category}</Badge>}</p>
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => setCustomer(null)}>Change</Button>
-                </div>
-              ) : (
-                <div className="flex-1">
-                  <div className="relative">
-                    <Input placeholder="Search customer by name or phone..." value={customerSearch} onChange={(e) => { setCustomerSearch(e.target.value); setShowCustomerSearch(true); }} icon={Search} />
-                    {showCustomerSearch && customerResults.length > 0 && (
-                      <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white border border-surface-200 rounded-xl shadow-lg max-h-48 overflow-y-auto">
-                        {customerResults.map((c) => (
-                          <button key={c._id} onClick={() => handleSelectCustomer(c)} className="w-full text-left px-4 py-3 hover:bg-surface-50 flex items-center gap-3 text-sm cursor-pointer border-b border-surface-50 last:border-0">
-                            <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-xs font-semibold text-primary-600">{c.name.charAt(0)}</div>
-                            <div><p className="font-medium">{c.name}</p><p className="text-xs text-surface-400">{c.phone}</p></div>
-                          </button>
-                        ))}
-                      </div>
+          <Card className="p-8 shadow-sm">
+            <h3 className="text-lg font-bold text-surface-900 mb-6 flex items-center gap-2">
+              <User className="w-5 h-5 text-primary-600" />
+              Customer Details
+            </h3>
+            
+            {customer ? (
+              <div className="flex items-center justify-between p-4 bg-primary-50 rounded-2xl border border-primary-100">
+                <div>
+                  <p className="font-bold text-primary-900 text-lg mb-1">{customer.name}</p>
+                  <p className="text-sm text-primary-600 flex items-center gap-2">
+                    {customer.phone} 
+                    {customer.category !== 'regular' && (
+                      <Badge color={customer.category === 'vip' ? 'vip' : 'premium'}>{customer.category}</Badge>
                     )}
-                  </div>
-                  <p className="text-xs text-surface-400 mt-2 mb-1">Or continue as Walk-in Customer:</p>
-                  <div className="flex gap-2">
-                    <Input placeholder="Walk-in Name (Optional)" value={walkInName} onChange={(e) => setWalkInName(e.target.value)} />
-                    <Input placeholder="Walk-in Phone (Optional)" value={walkInPhone} onChange={(e) => setWalkInPhone(e.target.value)} />
-                  </div>
+                  </p>
                 </div>
-              )}
-            </div>
+                <Button variant="secondary" size="sm" onClick={() => setCustomer(null)} className="bg-white hover:bg-surface-50 border-primary-200 text-primary-700">
+                  Change
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="relative">
+                  <Input 
+                    placeholder="Search existing customer by name or phone..." 
+                    value={customerSearch} 
+                    onChange={(e) => { setCustomerSearch(e.target.value); setShowCustomerSearch(true); }} 
+                    icon={Search} 
+                    className="text-base py-3 bg-surface-50"
+                  />
+                  {showCustomerSearch && customerResults.length > 0 && (
+                    <div className="absolute z-20 top-full left-0 right-0 mt-2 bg-white border border-surface-200 rounded-xl shadow-xl max-h-64 overflow-y-auto">
+                      {customerResults.map((c) => (
+                        <button key={c._id} onClick={() => handleSelectCustomer(c)} className="w-full text-left px-5 py-3 hover:bg-primary-50 flex items-center gap-4 cursor-pointer border-b border-surface-100 last:border-0 transition-colors">
+                          <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-sm font-bold text-primary-700">
+                            {c.name.charAt(0)}
+                          </div>
+                          <div>
+                            <p className="font-bold text-surface-900">{c.name}</p>
+                            <p className="text-sm text-surface-500">{c.phone}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative flex py-2 items-center">
+                  <div className="flex-grow border-t border-surface-200"></div>
+                  <span className="flex-shrink-0 mx-4 text-sm font-medium text-surface-400">OR NEW WALK-IN</span>
+                  <div className="flex-grow border-t border-surface-200"></div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <Input 
+                    label="Customer Name"
+                    placeholder="Optional" 
+                    value={walkInName} 
+                    onChange={(e) => setWalkInName(e.target.value)} 
+                    className="bg-surface-50"
+                  />
+                  <Input 
+                    label="Phone Number"
+                    placeholder="Optional" 
+                    value={walkInPhone} 
+                    onChange={(e) => setWalkInPhone(e.target.value)} 
+                    className="bg-surface-50"
+                  />
+                </div>
+              </div>
+            )}
           </Card>
 
           {/* Product Search */}
-          <Card>
-            <div className="relative flex items-center gap-3">
-              <div className="flex-1">
-                <Input ref={productSearchRef} placeholder="Search product by name, SKU, or barcode..." value={productSearch} onChange={(e) => setProductSearch(e.target.value)} icon={Search} />
-              </div>
-              <Button onClick={() => setShowScanner(true)} variant="secondary" className="px-4">Scan</Button>
-              {productResults.length > 0 && (
-                <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white border border-surface-200 rounded-xl shadow-lg max-h-64 overflow-y-auto">
-                  {productResults.map((p) => (
-                    <button key={p._id} onClick={() => handleAddProduct(p)} className="w-full text-left px-4 py-3 hover:bg-surface-50 flex items-center justify-between text-sm cursor-pointer border-b border-surface-50 last:border-0">
-                      <div>
-                        <p className="font-medium text-surface-900">{p.name}</p>
-                        <p className="text-xs text-surface-400">{p.sku} • {p.brand} • Stock: {p.stockQuantity}</p>
-                      </div>
-                      <p className="font-semibold text-primary-600">{fmt(p.sellingPrice)}</p>
-                    </button>
-                  ))}
-                </div>
-              )}
+          <div className="relative flex flex-col sm:flex-row items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-surface-100">
+            <div className="flex-1 w-full relative">
+              <Input 
+                ref={productSearchRef} 
+                placeholder="Search products by name, SKU, or barcode..." 
+                value={productSearch} 
+                onChange={(e) => setProductSearch(e.target.value)} 
+                icon={Search} 
+                className="py-3 text-base shadow-inner bg-surface-50 border-primary-100 focus:border-primary-500 focus:ring-primary-200"
+              />
             </div>
-          </Card>
+            <Button onClick={() => setShowScanner(true)} variant="secondary" size="lg" className="w-full sm:w-auto px-8 font-bold border-primary-200 hover:border-primary-300">
+              Scan Barcode
+            </Button>
+            
+            {productResults.length > 0 && (
+              <div className="absolute z-30 top-full left-0 right-0 mt-3 bg-white border border-surface-200 rounded-2xl shadow-2xl max-h-80 overflow-y-auto">
+                {productResults.map((p) => (
+                  <button key={p._id} onClick={() => handleAddProduct(p)} className="w-full text-left px-6 py-4 hover:bg-primary-50 flex items-center justify-between cursor-pointer border-b border-surface-100 last:border-0 transition-colors group">
+                    <div>
+                      <p className="font-bold text-surface-900 group-hover:text-primary-700 text-base mb-1">{p.name}</p>
+                      <p className="text-sm text-surface-500">
+                        <span className="font-mono bg-surface-100 px-2 py-0.5 rounded mr-2">{p.sku}</span> 
+                        {p.brand} • <span className={p.stockQuantity > 0 ? "text-success-600" : "text-danger-500"}>{p.stockQuantity} in stock</span>
+                      </p>
+                    </div>
+                    <p className="font-black text-lg text-primary-600">{fmt(p.sellingPrice)}</p>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Cart Items */}
-          <Card padding={false}>
+          <Card padding={false} className="overflow-hidden">
             {items.length === 0 ? (
-              <div className="text-center py-16 px-4">
-                <ShoppingCart className="w-16 h-16 text-surface-200 mx-auto mb-4" />
-                <p className="text-surface-500 text-lg font-medium">No items added</p>
-                <p className="text-surface-400 text-sm mt-1">Search for products above to add them to the bill</p>
+              <div className="text-center py-24 px-4 bg-surface-50/50">
+                <ShoppingCart className="w-20 h-20 text-surface-300 mx-auto mb-6" />
+                <p className="text-surface-600 text-xl font-bold">No items in the bill</p>
+                <p className="text-surface-400 mt-2">Search or scan products above to add them</p>
               </div>
             ) : (
               <div>
-                <div className="px-6 py-3 bg-surface-50/50 border-b border-surface-100 grid grid-cols-12 text-xs font-medium text-surface-500 uppercase tracking-wider">
+                <div className="hidden sm:grid px-6 py-4 bg-surface-100 border-b border-surface-200 grid-cols-12 text-xs font-bold text-surface-500 uppercase tracking-widest">
                   <div className="col-span-5">Product</div>
                   <div className="col-span-2 text-center">Qty</div>
                   <div className="col-span-2 text-right">Price</div>
                   <div className="col-span-2 text-right">Total</div>
                   <div className="col-span-1"></div>
                 </div>
+                
                 {items.map((item) => (
-                  <div key={item.product} className="border-b border-surface-50 last:border-0">
-                    <div className="px-6 py-4 grid grid-cols-12 items-center gap-2">
-                      <div className="col-span-5">
-                        <p className="font-medium text-surface-900 text-sm">{item.productName}</p>
-                        <p className="text-xs text-surface-400">{item.productSku}</p>
+                  <div key={item.product} className="border-b border-surface-200 last:border-0 bg-white">
+                    <div className="px-6 py-5 flex flex-col sm:grid sm:grid-cols-12 sm:items-center gap-4">
+                      {/* Product Name/SKU */}
+                      <div className="sm:col-span-5">
+                        <p className="font-bold text-surface-900 text-base">{item.productName}</p>
+                        <p className="text-sm font-mono text-surface-400 mt-1">{item.productSku}</p>
                       </div>
-                      <div className="col-span-2 flex items-center justify-center gap-1">
-                        <button onClick={() => updateItemQuantity(item.product, item.quantity - 1)} className="w-7 h-7 rounded-lg bg-surface-100 flex items-center justify-center hover:bg-surface-200 transition-colors cursor-pointer"><Minus className="w-3 h-3" /></button>
-                        <span className="w-8 text-center font-semibold text-sm">{item.quantity}</span>
-                        <button onClick={() => { if(item.quantity < item.maxStock) updateItemQuantity(item.product, item.quantity + 1); }} className="w-7 h-7 rounded-lg bg-surface-100 flex items-center justify-center hover:bg-surface-200 transition-colors cursor-pointer"><Plus className="w-3 h-3" /></button>
-                      </div>
-                      <div className="col-span-2 text-right text-sm text-surface-600">
-                        {fmt(item.unitPrice)}
-                        {item.glassDetails?.price > 0 && <div className="text-xs text-primary-600">+{fmt(item.glassDetails.price)}</div>}
-                      </div>
-                      <div className="col-span-2 text-right text-sm font-semibold">{fmt(item.total)}</div>
-                      <div className="col-span-1 text-right">
-                        <button onClick={() => removeItem(item.product)} className="p-1 rounded-lg text-surface-400 hover:text-danger-500 hover:bg-danger-50 transition-colors cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                      
+                      {/* Controls Row (Mobile) / Grid (Desktop) */}
+                      <div className="flex items-center justify-between sm:contents">
+                        <div className="sm:col-span-2 flex items-center justify-center gap-3">
+                          <button onClick={() => updateItemQuantity(item.product, item.quantity - 1)} className="w-10 h-10 rounded-full bg-surface-100 flex items-center justify-center hover:bg-surface-200 transition-colors cursor-pointer border border-surface-200 shadow-sm"><Minus className="w-4 h-4 text-surface-700" /></button>
+                          <span className="w-8 text-center font-bold text-lg">{item.quantity}</span>
+                          <button onClick={() => { if(item.quantity < item.maxStock) updateItemQuantity(item.product, item.quantity + 1); }} className="w-10 h-10 rounded-full bg-surface-100 flex items-center justify-center hover:bg-surface-200 transition-colors cursor-pointer border border-surface-200 shadow-sm"><Plus className="w-4 h-4 text-surface-700" /></button>
+                        </div>
+                        
+                        <div className="sm:col-span-2 sm:text-right text-base text-surface-600 font-medium">
+                          <span className="sm:hidden text-xs text-surface-400 mr-2 uppercase">Price:</span>
+                          {fmt(item.unitPrice)}
+                          {item.glassDetails?.price > 0 && <div className="text-sm text-primary-600 font-bold">+{fmt(item.glassDetails.price)} <span className="text-xs font-normal">lens</span></div>}
+                        </div>
+                        
+                        <div className="sm:col-span-2 sm:text-right text-lg font-black text-surface-900">
+                           <span className="sm:hidden text-xs text-surface-400 mr-2 uppercase font-medium">Total:</span>
+                          {fmt(item.total)}
+                        </div>
+                        
+                        <div className="sm:col-span-1 sm:text-right">
+                          <button onClick={() => removeItem(item.product)} className="p-2.5 rounded-full text-surface-400 hover:text-danger-500 hover:bg-danger-50 transition-colors cursor-pointer"><Trash2 className="w-5 h-5" /></button>
+                        </div>
                       </div>
                     </div>
 
                     {/* Lens Selection (Always Visible) */}
-                    <div className="px-6 py-2 bg-surface-50/30 flex items-center gap-3">
-                      <label className="text-sm font-medium text-surface-700 whitespace-nowrap">Select Lens:</label>
+                    <div className="px-6 py-4 bg-primary-50/50 border-t border-surface-100 flex flex-col sm:flex-row sm:items-center gap-4">
+                      <label className="text-sm font-bold text-primary-900 whitespace-nowrap">👓 Select Lens:</label>
                       <select 
-                        className="flex-1 rounded-xl border border-surface-200 bg-white px-3 py-1.5 text-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none"
+                        className="flex-1 rounded-xl border border-primary-200 bg-white px-4 py-2.5 text-sm font-medium text-surface-900 focus:border-primary-500 focus:ring-4 focus:ring-primary-100 outline-none shadow-sm transition-all"
                         value={item.glassDetails?.name || ''}
                         onChange={(e) => {
                           const selectedGlassName = e.target.value;
@@ -298,7 +358,7 @@ export default function CreateBill() {
                           useCartStore.getState().updateItemPrescription(item.product, item.hasPrescription, item.prescriptionDetails, newGlass);
                         }}
                       >
-                        <option value="">No Lens</option>
+                        <option value="">-- No Lens Selected --</option>
                         {(settings?.sales?.glassTypes || []).map(g => (
                           <option key={g.id} value={g.name}>{g.name} - {fmt(g.price)}</option>
                         ))}
@@ -306,54 +366,57 @@ export default function CreateBill() {
                     </div>
 
                     {/* Prescription Section */}
-                    <div className="px-6 pb-4 bg-surface-50/30">
-                      <div className="flex items-center gap-2 mb-3 mt-1">
+                    <div className="px-6 pb-6 bg-primary-50/50">
+                      <div className="flex items-center gap-3 mb-4 mt-2">
                         <input 
                           type="checkbox" 
                           id={`rx-${item.product}`}
-                          className="w-4 h-4 text-primary-600 rounded border-surface-300 focus:ring-primary-500 cursor-pointer"
+                          className="w-5 h-5 text-primary-600 rounded border-surface-300 focus:ring-primary-500 cursor-pointer shadow-sm"
                           checked={item.hasPrescription}
                           onChange={(e) => {
                             const { updateItemPrescription } = useCartStore.getState();
                             updateItemPrescription(item.product, e.target.checked, item.prescriptionDetails, item.glassDetails);
                           }}
                         />
-                        <label htmlFor={`rx-${item.product}`} className="text-sm font-medium text-surface-700 cursor-pointer">Add Prescription Data</label>
+                        <label htmlFor={`rx-${item.product}`} className="text-base font-bold text-surface-800 cursor-pointer select-none">Add Prescription Details</label>
                       </div>
 
                       {item.hasPrescription && (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-2 p-4 bg-white rounded-xl border border-surface-200 shadow-sm">
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-4 p-6 bg-white rounded-2xl border-2 border-primary-100 shadow-md">
                           {/* Right Eye */}
-                          <div>
-                            <p className="text-xs font-bold text-surface-500 uppercase mb-2 border-b border-surface-100 pb-1">Right Eye (OD)</p>
-                            <div className="grid grid-cols-4 gap-3">
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-2 border-b-2 border-surface-100 pb-2">
+                              <span className="w-8 h-8 rounded-full bg-surface-100 flex items-center justify-center font-black text-surface-700">R</span>
+                              <p className="text-sm font-black text-surface-800 uppercase tracking-wider">Right Eye (OD)</p>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                               <div>
-                                <label className="block text-[10px] font-bold text-surface-400 mb-1">SPH</label>
-                                <Input placeholder="e.g. -1.00" className="text-xs font-mono" value={item.prescriptionDetails?.rightEye?.sph || ''} onChange={(e) => {
+                                <label className="block text-xs font-black text-surface-500 mb-2 tracking-wide">SPH</label>
+                                <Input placeholder="-1.00" className="text-sm font-mono text-center font-bold" value={item.prescriptionDetails?.rightEye?.sph || ''} onChange={(e) => {
                                   const val = e.target.value.replace(/[^+-\d.]/g, '');
                                   const newDetails = { ...item.prescriptionDetails, rightEye: { ...item.prescriptionDetails.rightEye, sph: val } };
                                   useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
                                 }} />
                               </div>
                               <div>
-                                <label className="block text-[10px] font-bold text-surface-400 mb-1">CYL</label>
-                                <Input placeholder="e.g. -0.50" className="text-xs font-mono" value={item.prescriptionDetails?.rightEye?.cyl || ''} onChange={(e) => {
+                                <label className="block text-xs font-black text-surface-500 mb-2 tracking-wide">CYL</label>
+                                <Input placeholder="-0.50" className="text-sm font-mono text-center font-bold" value={item.prescriptionDetails?.rightEye?.cyl || ''} onChange={(e) => {
                                   const val = e.target.value.replace(/[^+-\d.]/g, '');
                                   const newDetails = { ...item.prescriptionDetails, rightEye: { ...item.prescriptionDetails.rightEye, cyl: val } };
                                   useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
                                 }} />
                               </div>
                               <div>
-                                <label className="block text-[10px] font-bold text-surface-400 mb-1">AXIS</label>
-                                <Input placeholder="e.g. 180" className="text-xs font-mono" value={item.prescriptionDetails?.rightEye?.axis || ''} onChange={(e) => {
+                                <label className="block text-xs font-black text-surface-500 mb-2 tracking-wide">AXIS</label>
+                                <Input placeholder="180" className="text-sm font-mono text-center font-bold" value={item.prescriptionDetails?.rightEye?.axis || ''} onChange={(e) => {
                                   const val = e.target.value.replace(/[^\d.]/g, '');
                                   const newDetails = { ...item.prescriptionDetails, rightEye: { ...item.prescriptionDetails.rightEye, axis: val } };
                                   useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
                                 }} />
                               </div>
                               <div>
-                                <label className="block text-[10px] font-bold text-surface-400 mb-1">ADD</label>
-                                <Input placeholder="e.g. +2.00" className="text-xs font-mono" value={item.prescriptionDetails?.rightEye?.add || ''} onChange={(e) => {
+                                <label className="block text-xs font-black text-surface-500 mb-2 tracking-wide">ADD</label>
+                                <Input placeholder="+2.00" className="text-sm font-mono text-center font-bold" value={item.prescriptionDetails?.rightEye?.add || ''} onChange={(e) => {
                                   const val = e.target.value.replace(/[^+-\d.]/g, '');
                                   const newDetails = { ...item.prescriptionDetails, rightEye: { ...item.prescriptionDetails.rightEye, add: val } };
                                   useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
@@ -362,36 +425,39 @@ export default function CreateBill() {
                             </div>
                           </div>
                           {/* Left Eye */}
-                          <div>
-                            <p className="text-xs font-bold text-surface-500 uppercase mb-2 border-b border-surface-100 pb-1">Left Eye (OS)</p>
-                            <div className="grid grid-cols-4 gap-3">
+                          <div className="space-y-4">
+                            <div className="flex items-center gap-2 border-b-2 border-surface-100 pb-2">
+                              <span className="w-8 h-8 rounded-full bg-surface-100 flex items-center justify-center font-black text-surface-700">L</span>
+                              <p className="text-sm font-black text-surface-800 uppercase tracking-wider">Left Eye (OS)</p>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                               <div>
-                                <label className="block text-[10px] font-bold text-surface-400 mb-1">SPH</label>
-                                <Input placeholder="e.g. -1.00" className="text-xs font-mono" value={item.prescriptionDetails?.leftEye?.sph || ''} onChange={(e) => {
+                                <label className="block text-xs font-black text-surface-500 mb-2 tracking-wide">SPH</label>
+                                <Input placeholder="-1.00" className="text-sm font-mono text-center font-bold" value={item.prescriptionDetails?.leftEye?.sph || ''} onChange={(e) => {
                                   const val = e.target.value.replace(/[^+-\d.]/g, '');
                                   const newDetails = { ...item.prescriptionDetails, leftEye: { ...item.prescriptionDetails.leftEye, sph: val } };
                                   useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
                                 }} />
                               </div>
                               <div>
-                                <label className="block text-[10px] font-bold text-surface-400 mb-1">CYL</label>
-                                <Input placeholder="e.g. -0.50" className="text-xs font-mono" value={item.prescriptionDetails?.leftEye?.cyl || ''} onChange={(e) => {
+                                <label className="block text-xs font-black text-surface-500 mb-2 tracking-wide">CYL</label>
+                                <Input placeholder="-0.50" className="text-sm font-mono text-center font-bold" value={item.prescriptionDetails?.leftEye?.cyl || ''} onChange={(e) => {
                                   const val = e.target.value.replace(/[^+-\d.]/g, '');
                                   const newDetails = { ...item.prescriptionDetails, leftEye: { ...item.prescriptionDetails.leftEye, cyl: val } };
                                   useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
                                 }} />
                               </div>
                               <div>
-                                <label className="block text-[10px] font-bold text-surface-400 mb-1">AXIS</label>
-                                <Input placeholder="e.g. 180" className="text-xs font-mono" value={item.prescriptionDetails?.leftEye?.axis || ''} onChange={(e) => {
+                                <label className="block text-xs font-black text-surface-500 mb-2 tracking-wide">AXIS</label>
+                                <Input placeholder="180" className="text-sm font-mono text-center font-bold" value={item.prescriptionDetails?.leftEye?.axis || ''} onChange={(e) => {
                                   const val = e.target.value.replace(/[^\d.]/g, '');
                                   const newDetails = { ...item.prescriptionDetails, leftEye: { ...item.prescriptionDetails.leftEye, axis: val } };
                                   useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
                                 }} />
                               </div>
                               <div>
-                                <label className="block text-[10px] font-bold text-surface-400 mb-1">ADD</label>
-                                <Input placeholder="e.g. +2.00" className="text-xs font-mono" value={item.prescriptionDetails?.leftEye?.add || ''} onChange={(e) => {
+                                <label className="block text-xs font-black text-surface-500 mb-2 tracking-wide">ADD</label>
+                                <Input placeholder="+2.00" className="text-sm font-mono text-center font-bold" value={item.prescriptionDetails?.leftEye?.add || ''} onChange={(e) => {
                                   const val = e.target.value.replace(/[^+-\d.]/g, '');
                                   const newDetails = { ...item.prescriptionDetails, leftEye: { ...item.prescriptionDetails.leftEye, add: val } };
                                   useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
@@ -401,14 +467,12 @@ export default function CreateBill() {
                           </div>
                           
                           {/* PD Field */}
-                          <div className="lg:col-span-2 pt-3 border-t border-surface-100">
-                            <div className="w-full sm:w-1/3">
-                              <label className="block text-[10px] font-bold text-surface-400 mb-1">PD (PUPIL DISTANCE)</label>
-                              <Input placeholder="e.g. 62" className="text-xs font-mono" value={item.prescriptionDetails?.pd || ''} onChange={(e) => {
-                                const newDetails = { ...item.prescriptionDetails, pd: e.target.value };
-                                useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
-                              }} />
-                            </div>
+                          <div className="lg:col-span-2 pt-4 border-t-2 border-surface-100 bg-surface-50 -mx-6 -mb-6 p-6 rounded-b-xl flex flex-col sm:flex-row sm:items-center gap-4">
+                            <label className="block text-sm font-black text-surface-700 tracking-wide whitespace-nowrap">PUPIL DISTANCE (PD)</label>
+                            <Input placeholder="e.g. 62" className="w-full sm:w-32 text-base font-mono font-bold" value={item.prescriptionDetails?.pd || ''} onChange={(e) => {
+                              const newDetails = { ...item.prescriptionDetails, pd: e.target.value };
+                              useCartStore.getState().updateItemPrescription(item.product, true, newDetails, item.glassDetails);
+                            }} />
                           </div>
                         </div>
                       )}
@@ -421,83 +485,89 @@ export default function CreateBill() {
         </div>
 
         {/* Right: Summary */}
-        <div className="space-y-4">
-          <Card className="sticky top-20">
-            <h3 className="text-lg font-bold text-surface-900 mb-6">Bill Summary</h3>
+        <div className="space-y-6">
+          <Card className="sticky top-24 p-8 shadow-md border-primary-100">
+            <h3 className="text-xl font-black text-surface-900 mb-8 pb-4 border-b-2 border-surface-100">Bill Summary</h3>
 
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between text-surface-600">
-                <span>Subtotal ({items.length} items)</span>
-                <span>{fmt(getSubtotal())}</span>
+            <div className="space-y-5">
+              <div className="flex justify-between items-center text-surface-600 text-base">
+                <span>Subtotal <span className="text-sm bg-surface-100 px-2 py-0.5 rounded ml-1">{items.length} items</span></span>
+                <span className="font-bold">{fmt(getSubtotal())}</span>
               </div>
 
               {/* Extra Discount */}
-              <div className="flex items-center gap-2">
-                <span className="text-surface-600 text-sm">Extra Discount</span>
-                <input 
-                  type="number" 
-                  className="w-24 ml-auto px-2 py-1 text-right text-sm border border-surface-200 rounded-lg focus:border-primary-500 focus:outline-none" 
-                  value={discount === 0 ? '' : discount} 
-                  onChange={(e) => setDiscount(e.target.value ? Number(e.target.value) : 0)} 
-                  placeholder="0" 
-                />
+              <div className="flex justify-between items-center group">
+                <span className="text-surface-600 text-sm font-medium">Extra Discount</span>
+                <div className="relative w-32">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-surface-400 font-bold">₹</span>
+                  <input 
+                    type="number" 
+                    className="w-full pl-7 pr-3 py-2 text-right font-bold text-base border-2 border-surface-200 rounded-xl focus:border-primary-500 focus:ring-4 focus:ring-primary-100 transition-all outline-none" 
+                    value={discount === 0 ? '' : discount} 
+                    onChange={(e) => setDiscount(e.target.value ? Number(e.target.value) : 0)} 
+                    placeholder="0" 
+                  />
+                </div>
               </div>
 
               {/* Settled / Final Amount */}
-              <div className="flex items-center gap-2">
-                <span className="text-surface-600 text-sm font-medium">Final Settled Amount</span>
-                <input 
-                  type="number" 
-                  className="w-28 ml-auto px-2 py-1 text-right text-sm border border-primary-200 bg-primary-50 text-primary-700 font-bold rounded-lg focus:border-primary-500 focus:outline-none" 
-                  value={isFinalFocused ? finalInput : (getGrandTotal() || '')} 
-                  onFocus={() => { setIsFinalFocused(true); setFinalInput(getGrandTotal() || ''); }}
-                  onBlur={() => setIsFinalFocused(false)}
-                  onChange={(e) => {
-                    setFinalInput(e.target.value);
-                    if (e.target.value === '') {
-                      setDiscount(0);
-                    } else {
-                      const beforeExtra = getSubtotal() - (getTotalDiscount() - discount) + getTotalTax();
-                      setDiscount(Math.max(0, beforeExtra - Number(e.target.value)));
-                    }
-                  }} 
-                  placeholder="0" 
-                />
+              <div className="flex justify-between items-center bg-primary-50 p-4 rounded-xl border border-primary-100">
+                <span className="text-primary-800 text-sm font-black tracking-wide">FINAL AMOUNT</span>
+                <div className="relative w-36">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-600 font-bold">₹</span>
+                  <input 
+                    type="number" 
+                    className="w-full pl-7 pr-3 py-2.5 text-right font-black text-lg border-2 border-primary-300 bg-white text-primary-700 rounded-xl focus:border-primary-600 focus:ring-4 focus:ring-primary-200 transition-all outline-none shadow-sm" 
+                    value={isFinalFocused ? finalInput : (getGrandTotal() || '')} 
+                    onFocus={() => { setIsFinalFocused(true); setFinalInput(getGrandTotal() || ''); }}
+                    onBlur={() => setIsFinalFocused(false)}
+                    onChange={(e) => {
+                      setFinalInput(e.target.value);
+                      if (e.target.value === '') {
+                        setDiscount(0);
+                      } else {
+                        const beforeExtra = getSubtotal() - (getTotalDiscount() - discount) + getTotalTax();
+                        setDiscount(Math.max(0, beforeExtra - Number(e.target.value)));
+                      }
+                    }} 
+                    placeholder="0" 
+                  />
+                </div>
               </div>
 
               {getTotalDiscount() > 0 && (
-                <div className="flex justify-between text-danger-500">
-                  <span>Total Discount</span>
+                <div className="flex justify-between text-danger-500 font-medium px-2">
+                  <span>Total Saved</span>
                   <span>-{fmt(getTotalDiscount())}</span>
                 </div>
               )}
 
-              <div className="flex justify-between text-surface-600">
+              <div className="flex justify-between text-surface-500 font-medium px-2">
                 <span>Tax (GST)</span>
                 <span>+{fmt(getTotalTax())}</span>
               </div>
 
-              <div className="border-t border-surface-200 pt-3 flex justify-between text-lg font-bold text-surface-900">
-                <span>Grand Total</span>
-                <span className="text-primary-600">{fmt(getGrandTotal())}</span>
+              <div className="mt-6 pt-6 border-t-2 border-dashed border-surface-200 flex justify-between items-end">
+                <span className="text-surface-500 font-bold uppercase tracking-widest text-sm mb-1">Grand Total</span>
+                <span className="text-4xl font-black text-primary-600">{fmt(getGrandTotal())}</span>
               </div>
             </div>
 
             {/* Payment Method */}
-            <div className="mt-6">
-              <p className="text-sm font-medium text-surface-700 mb-2">Payment Method</p>
-              <div className="grid grid-cols-3 gap-2">
+            <div className="mt-10">
+              <p className="text-xs font-black text-surface-400 mb-3 uppercase tracking-widest">Payment Method</p>
+              <div className="grid grid-cols-3 gap-3">
                 {paymentMethods.map((pm) => (
                   <button
                     key={pm.value}
                     onClick={() => setPaymentMethod(pm.value)}
-                    className={`flex flex-col items-center gap-1 py-3 rounded-xl border-2 text-sm font-medium transition-all cursor-pointer ${
+                    className={`flex flex-col items-center justify-center gap-2 py-4 rounded-xl border-2 text-sm font-bold transition-all cursor-pointer ${
                       paymentMethod === pm.value
-                        ? 'border-primary-500 bg-primary-50 text-primary-700'
-                        : 'border-surface-200 text-surface-500 hover:border-surface-300'
+                        ? 'border-primary-500 bg-primary-50 text-primary-700 shadow-sm'
+                        : 'border-surface-200 text-surface-500 hover:border-surface-300 hover:bg-surface-50'
                     }`}
                   >
-                    <pm.icon className="w-5 h-5" />
+                    <pm.icon className="w-6 h-6" />
                     {pm.label}
                   </button>
                 ))}

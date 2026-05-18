@@ -55,10 +55,14 @@ export default function InvoiceView() {
     const phone = sale.customer?.phone || sale.customerPhone || '';
     const cleanPhone = phone.replace(/\D/g, '');
     const fullPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const shopName = settings?.general?.storeName || process.env.SHOP_NAME || 'our store';
     const invoiceUrl = `${window.location.origin}/bill/${sale._id}`;
     const message = `Dear ${sale.customer?.name || sale.customerName || 'Customer'},\n\nThank you for your purchase at *${shopName}*!\n\nYour invoice *#${settings?.sales?.invoicePrefix || 'INV-'}${sale.invoiceNumber}* for *₹${sale.grandTotal.toLocaleString('en-IN')}* is ready.\n\nView & Download your bill here:\n${invoiceUrl}\n\nRegards,\n*${shopName}*`;
-    return { url: `https://wa.me/${fullPhone}?text=${encodeURIComponent(message)}`, message, phone: fullPhone };
+    const waUrl = isMobile 
+      ? `whatsapp://send?phone=${fullPhone}&text=${encodeURIComponent(message)}` 
+      : `https://web.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(message)}`;
+    return { url: waUrl, message, phone: fullPhone };
   };
 
   if (loading) return <div className="p-8 text-center text-surface-500">Loading invoice...</div>;

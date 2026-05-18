@@ -236,7 +236,10 @@ export default function Dashboard() {
                   const bdayMsg = `Dear *${c.name}*,\n\n🎂🎉 *Happy Birthday!* 🎉🎂\n\nWishing you a wonderful day filled with joy and happiness!\n\nAs a token of our appreciation, visit *${shopName}* for a special birthday surprise!\n\nWarm regards,\n*${shopName}* Team`;
                   const cleanPhone = (c.phone || '').replace(/\D/g, '');
                   const fullPhone = cleanPhone.startsWith('91') ? cleanPhone : `91${cleanPhone}`;
-                  const waUrl = `https://wa.me/${fullPhone}?text=${encodeURIComponent(bdayMsg)}`;
+                  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                  const waUrl = isMobile 
+                    ? `whatsapp://send?phone=${fullPhone}&text=${encodeURIComponent(bdayMsg)}` 
+                    : `https://web.whatsapp.com/send?phone=${fullPhone}&text=${encodeURIComponent(bdayMsg)}`;
                   return (
                     <div key={c._id} className="flex items-center justify-between mt-1 ml-6">
                       <div>
