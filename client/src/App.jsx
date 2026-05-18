@@ -87,7 +87,9 @@ function PublicLayout() {
 // Protected admin layout with sidebar
 function AppLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const sidebarWidth = sidebarCollapsed ? 72 : 260;
+  const sidebarWidth = sidebarCollapsed ? 80 : 280;
+  // 16px left + width + 16px gap = width + 32
+  const marginLeft = sidebarWidth + 32;
 
   return (
     <>
@@ -96,17 +98,17 @@ function AppLayout() {
         style={{
           position: 'fixed',
           top: 0,
-          left: `${sidebarWidth}px`,
+          left: `${marginLeft}px`,
           right: 0,
           bottom: 0,
-          transition: 'left 0.3s',
+          transition: 'left 0.4s ease-in-out',
           display: 'flex',
           flexDirection: 'column',
           background: 'var(--color-surface-50)',
         }}
       >
         <Header onMenuToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
-        <main className="flex-1 p-6 pr-10 lg:p-8 lg:pr-10 overflow-y-auto overflow-x-hidden">
+        <main className="flex-1 p-6 pr-6 lg:p-10 lg:pr-10 overflow-y-auto overflow-x-hidden">
           <Suspense fallback={<PageLoader />}>
             <Outlet />
           </Suspense>
