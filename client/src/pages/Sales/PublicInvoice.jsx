@@ -18,7 +18,8 @@ export default function PublicInvoice() {
 
   const loadInvoice = async () => {
     try {
-      const res = await fetch(`/api/sales/public/${id}`);
+      const apiBase = import.meta.env.VITE_API_URL || '';
+      const res = await fetch(`${apiBase}/api/sales/public/${id}`);
       const data = await res.json();
       if (!data.success) throw new Error(data.message || 'Invoice not found');
       setSale(data.data.sale);
